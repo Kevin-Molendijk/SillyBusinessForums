@@ -1,36 +1,44 @@
+<!-- resources/views/layouts/app.blade.php -->
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forum Application</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 font-sans leading-normal tracking-normal">
+<!-- Header -->
+<header class="bg-blue-600 p-4 text-white">
+    <div class="container mx-auto flex justify-between items-center">
+        <h1 class="text-xl font-bold">
+            <a href="{{ url('/') }}">My Forum</a>
+        </h1>
+        <nav>
+            @guest
+                <a href="{{ route('login') }}" class="mr-4">Login</a>
+                <a href="{{ route('register') }}">Register</a>
+            @else
+                <a href="{{ url('/user-dashboard') }}" class="mr-4">Dashboard</a>
+                <span>{{ Auth::user()->name }}</span>
+                <form action="{{ route('logout') }}" method="POST" class="inline ml-2">
+                    @csrf
+                    <button type="submit" class="text-red-500">Logout</button>
+                </form>
+            @endguest
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+            @auth
+                @if(Auth::user()->role === 'admin')
+                    <a href="{{ route('admin.dashboard') }}" class="ml-4">Admin Dashboard</a>
+                @endif
+            @endauth
+        </nav>
+    </div>
+</header>
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100">
-            @include('layouts.navigation')
-
-            <!-- Page Heading -->
-            @if (isset($header))
-                <header class="bg-white shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
-                    </div>
-                </header>
-            @endif
-
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
-        </div>
-    </body>
+<!-- Content -->
+<main class="container mx-auto mt-4">
+    {{ $slot }}
+</main>
+</body>
 </html>
