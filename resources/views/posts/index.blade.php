@@ -12,6 +12,10 @@
                 <p class="text-gray-700">{{ $post->content }}</p>
                 <p class="text-sm text-gray-500">By {{ $post->user->name }} | {{ $post->created_at->format('M d, Y') }}</p>
             </div>
+
+            @if (auth()->id() === $post->user_id)
+                <a href="{{ route('posts.edit', $post) }}" class="text-blue-600 hover:underline">Edit</a>
+            @endif
         @endforeach
     </div>
 </x-app-layout>
