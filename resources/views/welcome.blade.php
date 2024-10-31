@@ -9,4 +9,6 @@
     <div class="text-center">
         <p>This is the home page of the forum application. Feel free to browse around and participate!</p>
     </div>
+    <div class="max-w-xl mx-auto">
+    </div>
 </x-app-layout>

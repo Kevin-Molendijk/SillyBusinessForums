@@ -25,6 +25,9 @@
                     @csrf
                     <button type="submit" class="text-red-500">Logout</button>
                 </form>
+                <a href="{{ route('posts.create') }}" class="ml-4 px-4 py-2 bg-blue-600 text-white font-semibold rounded-md">
+                    Create Post
+                </a>
             @endguest
 
             @auth
