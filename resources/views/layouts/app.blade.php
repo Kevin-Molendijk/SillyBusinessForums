@@ -14,6 +14,7 @@
         <h1 class="text-xl font-bold">
             <a href="{{ url('/') }}">My Forum</a>
         </h1>
+        <x-search-bar />
         <nav>
             @guest
                 <a href="{{ route('login') }}" class="mr-4">Login</a>

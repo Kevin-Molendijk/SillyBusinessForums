@@ -14,14 +14,22 @@
 
         <!-- Comment Form -->
         <div class="bg-white p-6 shadow-sm rounded-lg mb-4">
-            <form action="{{ route('comments.store', $post) }}" method="POST">
-                @csrf
-                <div class="mb-4">
-                    <label for="content" class="block text-sm font-medium text-gray-700">Reactie</label>
-                    <textarea name="content" id="content" rows="4" class="mt-1 block w-full" required></textarea>
-                </div>
-                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Plaats Reactie</button>
-            </form>
+            @auth
+                <!-- Form for logged-in users to leave a comment -->
+                <form action="{{ route('comments.store', $post) }}" method="POST">
+                    @csrf
+                    <div class="mb-4">
+                        <label for="content" class="block text-sm font-medium text-gray-700">Reactie</label>
+                        <textarea name="content" id="content" rows="4" class="mt-1 block w-full" required></textarea>
+                    </div>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Plaats Reactie</button>
+                </form>
+            @else
+                <!-- Message for guests -->
+                <p class="text-gray-700">Log in om comments achter te laten.</p>
+                <a href="{{ route('login') }}" class="text-blue-600 hover:underline">Log in</a>
+                of <a href="{{ route('register') }}" class="text-blue-600 hover:underline">maak een account aan</a>.
+            @endauth
         </div>
 
         <!-- List of Comments -->

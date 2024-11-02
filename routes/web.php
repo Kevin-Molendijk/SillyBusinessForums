@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\HomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,13 +17,11 @@ use App\Http\Controllers\CommentController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/user-dashboard', function () {
     return view('user-dashboard');
-})->middleware(['auth', 'verified'])->name('user--dashboard');
+})->middleware(['auth', 'verified'])->name('user-dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -48,5 +47,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
     })->name('admin.dashboard');
 });
 
+Route::get('/search', [PostController::class, 'search'])->name('search');
 
 require __DIR__ . '/auth.php';

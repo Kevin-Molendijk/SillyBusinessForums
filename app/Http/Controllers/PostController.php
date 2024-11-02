@@ -77,6 +77,16 @@ class PostController extends Controller
         return view('posts.show', compact('post', 'comments'));
     }
 
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
+
+        // Zoeken op posts op titel
+        $posts = Post::where('title', 'like', '%' . $query . '%')->get();
+
+        // Geef de resultaten door aan de zoekresultatenpagina
+        return view('posts.search-results', compact('posts', 'query'));
+    }
 
 
 }
