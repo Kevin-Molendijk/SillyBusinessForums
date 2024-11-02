@@ -62,6 +62,20 @@ class PostController extends Controller
         return redirect()->route('posts.index')->with('success', 'Post bijgewerkt!');
     }
 
+    public function destroy(Post $post)
+    {;
+        $post->delete();
+
+        return redirect()->route('posts.index')->with('status', 'Post succesvol verwijderd!');
+    }
+
+    public function show(Post $post)
+    {
+        // Haal de comments op die bij deze post horen
+        $comments = $post->comments()->with('user')->get();
+
+        return view('posts.show', compact('post', 'comments'));
+    }
 
 
 

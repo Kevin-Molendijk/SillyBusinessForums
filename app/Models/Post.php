@@ -17,4 +17,10 @@ class Post extends Model
         'content',  // Voeg ook andere velden toe die ingevuld moeten kunnen worden
         'user_id',  // Bijv. ID van de auteur van de post
     ];
+
+    // app/Models/Post.php
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
 }
