@@ -9,10 +9,29 @@ use App\Models\Category;
 
 class PostController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $posts = Post::with('user')->latest()->get(); // Ophalen van berichten met gebruikersinfo
-        return view('posts.index', compact('posts')); // Doorsturen naar de index-view
+        // Begin met het ophalen van alle posts met bijbehorende categorie
+        $query = Post::with('user', 'category')->latest();
+
+        // Filter op categorie
+        if ($request->has('category') && $request->category != '') {
+            $query->where('category_id', $request->category);
+        }
+
+        // Zoekfunctie
+        if ($request->has('search') && $request->search != '') {
+            $query->where('title', 'like', '%' . $request->search . '%');
+        }
+
+        // Voer de query uit
+        $posts = $query->get();
+
+        // Haal alle categorieën op voor de dropdown
+        $categories = Category::all();
+
+        // Geef de posts en categorieën door aan de view
+        return view('posts.index', compact('posts', 'categories'));
     }
 
     public function create()
