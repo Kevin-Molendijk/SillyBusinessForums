@@ -6,13 +6,19 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Category;
-
+use Illuminate\Support\Facades\Gate;
 class PostController extends Controller
 {
     public function index(Request $request)
     {
-        // Begin met het ophalen van alle posts met bijbehorende categorie
+        // Begin met het ophalen van alle zichtbare posts met bijbehorende categorie
         $query = Post::with('user', 'category')->latest();
+
+        // Alleen niet-verborgen posts ophalen, behalve voor admins of de eigenaar
+        $query->where(function ($query) {
+            $query->where('hidden', false)
+                ->orWhere('user_id', auth()->id());
+        });
 
         // Filter op categorie
         if ($request->has('category') && $request->category != '') {
@@ -30,9 +36,9 @@ class PostController extends Controller
         // Haal alle categorieën op voor de dropdown
         $categories = Category::all();
 
-        // Geef de posts en categorieën door aan de view
         return view('posts.index', compact('posts', 'categories'));
     }
+
 
     public function create()
     {
@@ -123,6 +129,30 @@ class PostController extends Controller
 
         // Stuur de gegevens naar de view, inclusief de categorie om de naam te tonen
         return view('posts.index', compact('posts', 'category'));
+    }
+
+    public function toggleHidden(Request $request, Post $post)
+    {
+        // Zorg ervoor dat alleen de eigenaar de status kan wijzigen
+        if ($request->user()->id !== $post->user_id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        // Toggle de hidden status
+        $post->hidden = !$post->hidden;
+        $post->save();
+
+        return response()->json(['hidden' => $post->hidden]);
+    }
+
+    public function profile(Request $request)
+    {
+        $user = $request->user();
+
+        // Haal alleen de posts van de ingelogde gebruiker op, inclusief verborgen posts
+        $posts = Post::where('user_id', $user->id)->latest()->get();
+
+        return view('profile', compact('posts'));
     }
 
 }

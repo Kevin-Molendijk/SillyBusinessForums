@@ -7,6 +7,8 @@
     <title>Forum Application</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <body class="bg-gray-100 font-sans leading-normal tracking-normal">
 <!-- Header -->
 <header class="bg-blue-600 p-4 text-white">
@@ -20,7 +22,7 @@
                 <a href="{{ route('login') }}" class="mr-4">Login</a>
                 <a href="{{ route('register') }}">Register</a>
             @else
-                <a href="{{ url('/profile') }}" class="mr-4">Dashboard</a>
+                <a href="{{ url('/profile') }}" class="mr-4">Profile</a>
                 <span>{{ Auth::user()->name }}</span>
                 <form action="{{ route('logout') }}" method="POST" class="inline ml-2">
                     @csrf

@@ -1,30 +1,67 @@
-<!-- resources/views/profile/show.blade.php -->
+<!-- resources/views/profile.blade.php -->
+
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="text-2xl font-bold mb-4">
-            {{ __('Profiel Pagina') }}
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Mijn Profiel') }}
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <h3 class="text-lg font-medium mb-4">{{ __('Persoonlijke Gegevens') }}</h3>
-
-                    <div class="mb-4">
-                        <strong>{{ __('Naam:') }}</strong> {{ Auth::user()->name }}
-                    </div>
-                    <div class="mb-4">
-                        <strong>{{ __('E-mail:') }}</strong> {{ Auth::user()->email }}
-                    </div>
-
-                    <a href="{{ route('profile.edit') }}"
-                       class="mt-4 inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-500 active:bg-blue-700 focus:outline-none focus:border-blue-700 focus:ring ring-blue-300 disabled:opacity-25 transition">
-                        {{ __('Gegevens Aanpassen') }}
-                    </a>
-                </div>
-            </div>
+    <div class="container mx-auto py-6 space-y-6">
+        <div class="bg-white p-6 shadow-sm rounded-lg">
+            <h3 class="font-semibold text-lg">Welkom, {{ $user->name }}</h3>
+            <p>Email: {{ $user->email }}</p>
         </div>
+        <div>
+            <!-- Bewerk profiel knop -->
+            <a href="{{ route('profile.edit') }}" class="text-blue-500 hover:underline">
+                Bewerk Profiel
+            </a>
+        </div>
+
+        <h3 class="font-semibold text-lg mt-6">Mijn Posts</h3>
+        @foreach ($posts as $post)
+            <div class="bg-white p-6 shadow-sm rounded-lg mt-4">
+                <h4 class="font-semibold">{{ $post->title }}</h4>
+                <p>{{ $post->content }}</p>
+                <p>Status: {{ $post->hidden ? 'Verborgen' : 'Zichtbaar' }}</p>
+            </div>
+
+            @if(auth()->id() === $post->user_id)
+                <button class="toggle-hidden-btn" data-post-id="{{ $post->id }}">
+                    {{ $post->hidden ? 'Unhide' : 'Hide' }}
+                </button>
+            @endif
+
+        @endforeach
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.toggle-hidden-btn').on('click', function() {
+                var button = $(this);
+                var postId = button.data('post-id');
+
+                $.ajax({
+                    url: `/posts/${postId}/toggle-hidden`,
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        if (response.hidden) {
+                            button.text('Unhide');
+                        } else {
+                            button.text('Hide');
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('Er is een fout opgetreden: ' + xhr.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+
 </x-app-layout>

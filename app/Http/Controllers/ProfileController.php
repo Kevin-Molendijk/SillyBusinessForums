@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use App\Models\Post;
 
 class ProfileController extends Controller
 {
@@ -56,5 +57,12 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+
+    public function show()
+    {
+        $user = Auth::user();
+        $posts = $user->posts()->latest()->get(); // Haal posts van de gebruiker op
+        return view('profile', compact('user', 'posts'));
     }
 }

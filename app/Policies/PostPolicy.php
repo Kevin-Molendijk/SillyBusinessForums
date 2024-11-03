@@ -11,4 +11,10 @@ class PostPolicy
     {
         return $user->id === $post->user_id;
     }
+
+    public function toggleHidden(User $user, Post $post)
+    {
+        return $user->isAdmin() || $user->id === $post->user_id;
+    }
+
 }
