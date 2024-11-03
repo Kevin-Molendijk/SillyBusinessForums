@@ -13,14 +13,20 @@ class Post extends Model
     }
 
     protected $fillable = [
-        'title',    // Voeg title hier toe
-        'content',  // Voeg ook andere velden toe die ingevuld moeten kunnen worden
-        'user_id',  // Bijv. ID van de auteur van de post
+        'title',
+        'content',
+        'user_id',
+        'category_id',
     ];
 
     // app/Models/Post.php
     public function comments()
     {
         return $this->hasMany(Comment::class);
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 }

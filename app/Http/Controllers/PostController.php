@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Category;
 
 class PostController extends Controller
 {
@@ -16,26 +17,31 @@ class PostController extends Controller
 
     public function create()
     {
-        return view('posts.create');
+        $categories = Category::all();
+        return view('posts.create', compact('categories'));
     }
 
+    // PostController.php
     public function store(Request $request)
     {
         // Valideer de input
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
-            'content' => 'required|string', // Zorg ervoor dat 'content' vereist is
+            'content' => 'required|string',
+            'category_id' => 'required|exists:categories,id',
         ]);
 
         // Maak de post aan
         Post::create([
             'title' => $validatedData['title'],
             'content' => $validatedData['content'],
+            'category_id' => $validatedData['category_id'],  // Gebruik gevalideerde data voor category_id
             'user_id' => auth()->id(),
         ]);
 
         return redirect()->route('posts.index')->with('success', 'Post successfully created!');
     }
+
 
     public function edit(Post $post)
     {
@@ -88,5 +94,16 @@ class PostController extends Controller
         return view('posts.search-results', compact('posts', 'query'));
     }
 
+    public function filterByCategory($categoryId)
+    {
+        // Haal de categorie op
+        $category = Category::findOrFail($categoryId);
+
+        // Haal alle posts binnen deze categorie op
+        $posts = Post::where('category_id', $categoryId)->latest()->get();
+
+        // Stuur de gegevens naar de view, inclusief de categorie om de naam te tonen
+        return view('posts.index', compact('posts', 'category'));
+    }
 
 }

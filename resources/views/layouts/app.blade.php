@@ -20,7 +20,7 @@
                 <a href="{{ route('login') }}" class="mr-4">Login</a>
                 <a href="{{ route('register') }}">Register</a>
             @else
-                <a href="{{ url('/user-dashboard') }}" class="mr-4">Dashboard</a>
+                <a href="{{ url('/profile') }}" class="mr-4">Dashboard</a>
                 <span>{{ Auth::user()->name }}</span>
                 <form action="{{ route('logout') }}" method="POST" class="inline ml-2">
                     @csrf
@@ -39,10 +39,21 @@
         </nav>
     </div>
 </header>
+<!-- app.blade.php (onder de header) -->
+<nav class="bg-gray-100 py-4">
+    <div class="container mx-auto flex space-x-4 overflow-x-auto">
+        @foreach($categories as $category)
+            <a href="{{ route('posts.category', $category->id) }}" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
+                {{ $category->name }}
+            </a>
+        @endforeach
+    </div>
+</nav>
+
 
 <!-- Content -->
 <main class="container mx-auto mt-4">
-    {{ $slot }}
+    {{ $slot ?? '' }}
 </main>
 </body>
 </html>
