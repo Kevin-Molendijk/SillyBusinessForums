@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Verwijst naar de gebruiker
             $table->string('title');
             $table->text('content');
+            $table->boolean('hidden')->default(false)->change();
             $table->timestamps();
         });
     }

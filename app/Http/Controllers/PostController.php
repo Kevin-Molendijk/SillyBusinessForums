@@ -46,17 +46,14 @@ class PostController extends Controller
         return view('posts.create', compact('categories'));
     }
 
-    // PostController.php
     public function store(Request $request)
     {
-        // Valideer de input
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
             'category_id' => 'required|exists:categories,id',
         ]);
 
-        // Maak de post aan
         Post::create([
             'title' => $validatedData['title'],
             'content' => $validatedData['content'],
@@ -66,7 +63,6 @@ class PostController extends Controller
 
         return redirect()->route('posts.index')->with('success', 'Post successfully created!');
     }
-
 
     public function edit(Post $post)
     {
@@ -108,28 +104,6 @@ class PostController extends Controller
         return view('posts.show', compact('post', 'comments'));
     }
 
-    public function search(Request $request)
-    {
-        $query = $request->input('query');
-
-        // Zoeken op posts op titel
-        $posts = Post::where('title', 'like', '%' . $query . '%')->get();
-
-        // Geef de resultaten door aan de zoekresultatenpagina
-        return view('posts.search-results', compact('posts', 'query'));
-    }
-
-    public function filterByCategory($categoryId)
-    {
-        // Haal de categorie op
-        $category = Category::findOrFail($categoryId);
-
-        // Haal alle posts binnen deze categorie op
-        $posts = Post::where('category_id', $categoryId)->latest()->get();
-
-        // Stuur de gegevens naar de view, inclusief de categorie om de naam te tonen
-        return view('posts.index', compact('posts', 'category'));
-    }
 
     public function toggleHidden(Request $request, Post $post)
     {
