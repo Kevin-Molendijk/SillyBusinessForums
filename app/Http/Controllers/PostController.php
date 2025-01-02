@@ -36,16 +36,22 @@ class PostController extends Controller
         return view('posts.index', compact('posts', 'categories'));
     }
 
-
     public function create()
     {
         $categories = Category::all();
         return view('posts.create', compact('categories'));
     }
 
-    // PostController.php
     public function store(Request $request)
     {
+        $user = auth()->user();
+
+        // Controleer of de gebruiker minimaal 5 reacties heeft geplaatst
+        if ($user->comments()->count() < 5) {
+            return redirect()->route('posts.index')
+                ->with('error', 'Je moet minimaal 5 reacties plaatsen voordat je een eigen post kunt maken.');
+        }
+
         // Valideer de input
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
@@ -57,12 +63,13 @@ class PostController extends Controller
         Post::create([
             'title' => $validatedData['title'],
             'content' => $validatedData['content'],
-            'category_id' => $validatedData['category_id'],  // Gebruik gevalideerde data voor category_id
-            'user_id' => auth()->id(),
+            'category_id' => $validatedData['category_id'],
+            'user_id' => $user->id,
         ]);
 
-        return redirect()->route('posts.index')->with('success', 'Post successfully created!');
+        return redirect()->route('posts.index')->with('success', 'Post succesvol aangemaakt!');
     }
+
 
 
     public function edit(Post $post)
