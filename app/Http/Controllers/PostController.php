@@ -11,10 +11,15 @@ class PostController extends Controller
 {
     public function index(Request $request)
     {
-        // Begin met het ophalen van alle posts met bijbehorende categorie
         $query = Post::with('user', 'category')->latest();
 
-        // Filter op categorie
+        // Alleen niet-verborgen posts ophalen, tenzij je de eigenaar bent
+        $query->where(function ($query) {
+            $query->where('hidden', false)
+                ->orWhere('user_id', auth()->id());
+        });
+
+        // Filter op categorie (indien nodig)
         if ($request->has('category') && $request->category != '') {
             $query->where('category_id', $request->category);
         }
@@ -24,15 +29,13 @@ class PostController extends Controller
             $query->where('title', 'like', '%' . $request->search . '%');
         }
 
-        // Voer de query uit
         $posts = $query->get();
 
-        // Haal alle categorieën op voor de dropdown
         $categories = Category::all();
 
-        // Geef de posts en categorieën door aan de view
         return view('posts.index', compact('posts', 'categories'));
     }
+
 
     public function create()
     {
@@ -125,4 +128,17 @@ class PostController extends Controller
         return view('posts.index', compact('posts', 'category'));
     }
 
+    public function toggleHidden(Request $request, Post $post)
+    {
+        // Zorg dat alleen de eigenaar de post kan togglen
+        if ($request->user()->id !== $post->user_id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        // Toggle de hidden-status
+        $post->hidden = !$post->hidden;
+        $post->save();
+
+        return response()->json(['hidden' => $post->hidden, 'message' => 'Visibility updated!']);
+    }
 }

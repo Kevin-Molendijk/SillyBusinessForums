@@ -9,6 +9,7 @@
         @foreach ($posts as $post)
             <a href="{{ route('posts.show', $post->id) }}" class="block">
                 <div class="bg-white p-6 shadow-sm rounded-lg mb-4 hover:bg-gray-100 transition">
+                    <div>Big john is here</div>
                     <h3 class="font-bold text-lg">{{ $post->title }}</h3>
                     <p class="text-gray-700">{{ \Illuminate\Support\Str::limit($post->content, 150) }}</p>
                     <p class="text-sm text-gray-500 mt-2">

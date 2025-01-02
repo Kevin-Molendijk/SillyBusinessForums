@@ -38,7 +38,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/posts/{post}', [PostController::class, 'update'])->name('posts.update');
     Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
     Route::get('/category/{category}', [PostController::class, 'filterByCategory'])->name('posts.category');
-
+    Route::post('/posts/{post}/toggle-hidden', [PostController::class, 'toggleHidden'])->name('posts.toggleHidden');
 });
 
 Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
